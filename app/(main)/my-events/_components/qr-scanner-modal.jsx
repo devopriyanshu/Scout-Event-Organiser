@@ -14,7 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-export default function QRScannerModal({ isOpen, onClose }) {
+export default function QRScannerModal({ isOpen, onClose, onScan }) {
   const [scannerReady, setScannerReady] = useState(false);
   const [error, setError] = useState(null);
 
@@ -22,7 +22,19 @@ export default function QRScannerModal({ isOpen, onClose }) {
     api.registrations.checkInAttendee
   );
 
-  const handleCheckIn = async (qrCode) => {
+  const handleScan = async (qrCode) => {
+    // If a custom onScan handler is provided, use it
+    if (onScan) {
+      try {
+        await onScan(qrCode);
+        // We don't close here, let the parent decide or close manually
+      } catch (e) {
+        console.error("Custom scan handler error:", e);
+      }
+      return;
+    }
+
+    // Default behavior: Check in attendee directly
     try {
       const result = await checkInAttendee({ qrCode });
 
@@ -84,7 +96,7 @@ export default function QRScannerModal({ isOpen, onClose }) {
           if (scanner) {
             scanner.clear().catch(console.error);
           }
-          handleCheckIn(decodedText);
+          handleScan(decodedText);
         };
 
         const onScanError = (error) => {

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { api } from "@/convex/_generated/api";
@@ -5,6 +6,7 @@ import { useConvexMutation } from "@/hooks/use-convex-query";
 import { format } from "date-fns";
 import { CheckCircle, Circle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import QRScannerModal from "./qr-scanner-modal";
 
 // Attendee Card Component
 export function AttendeeCard({ registration }) {
@@ -12,11 +14,26 @@ export function AttendeeCard({ registration }) {
     api.registrations.checkInAttendee
   );
 
-  const handleManualCheckIn = async () => {
+
+
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+
+  // When "Check In" is clicked, open the scanner modal instead of direct check-in
+  const handleManualCheckIn = () => {
+    setIsScannerOpen(true);
+  };
+
+  const handleScan = async (scannedQrCode) => {
+    if (scannedQrCode !== registration.qrCode) {
+      toast.error("❌ QR code does not match this attendee");
+      return;
+    }
+
     try {
-      const result = await checkInAttendee({ qrCode: registration.qrCode });
+      const result = await checkInAttendee({ qrCode: scannedQrCode });
       if (result.success) {
-        toast.success("Attendee checked in successfully");
+        toast.success("✅ Attendee verified and checked in");
+        setIsScannerOpen(false);
       } else {
         toast.error(result.message);
       }
@@ -75,6 +92,12 @@ export function AttendeeCard({ registration }) {
           </Button>
         )}
       </CardContent>
+
+      <QRScannerModal
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        onScan={handleScan}
+      />
     </Card>
   );
 }

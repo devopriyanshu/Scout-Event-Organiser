@@ -32,7 +32,7 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <Image
-              src="/scout.png"
+              src="/scout1.png"
               alt="Scout logo"
               width={500}
               height={500}
