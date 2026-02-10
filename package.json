@@ -9,7 +9,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.34.1",
     "@clerk/themes": "^2.4.31",
     "@google/generative-ai": "^0.24.1",
     "@hookform/resolvers": "^5.2.2",
@@ -46,7 +45,9 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@clerk/nextjs": "^6.37.3",
     "@tailwindcss/postcss": "^4",
+    "baseline-browser-mapping": "^2.9.19",
     "eslint": "^9",
     "eslint-config-next": "^16.1.6",
     "tailwindcss": "^4",
